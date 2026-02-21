@@ -3,25 +3,213 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cosmic-black: #050510;
+  --cosmic-navy: #0a0a2e;
+  --cosmic-purple: #1a0a3e;
+  --gold: #d4a853;
+  --gold-light: #f0d48a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cosmic-black);
+  color: #ffffff;
+  font-family: "Inter", system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cosmic-black);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 168, 83, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 168, 83, 0.6);
+}
+
+/* Gold gradient text */
+.text-gold-gradient {
+  background: linear-gradient(
+    135deg,
+    #d4a853 0%,
+    #f0d48a 40%,
+    #d4a853 60%,
+    #b8860b 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Cosmic gradient backgrounds */
+.bg-cosmic-gradient {
+  background: linear-gradient(180deg, #050510 0%, #0a0a2e 40%, #1a0a3e 100%);
+}
+
+.bg-jupiter-gradient {
+  background: linear-gradient(
+    180deg,
+    #050510 0%,
+    #1a0f05 30%,
+    #2d1b0e 50%,
+    #1a0f05 80%,
+    #050510 100%
+  );
+}
+
+.bg-pluto-gradient {
+  background: linear-gradient(
+    180deg,
+    #050510 0%,
+    #051a2d 30%,
+    #0a1e3d 50%,
+    #051a2d 80%,
+    #050510 100%
+  );
+}
+
+/* Glass morphism */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Glow effects */
+.glow-gold {
+  filter: drop-shadow(0 0 20px rgba(212, 168, 83, 0.4));
+}
+
+.glow-amber {
+  filter: drop-shadow(0 0 30px rgba(232, 163, 23, 0.4))
+    drop-shadow(0 0 60px rgba(232, 163, 23, 0.15));
+}
+
+.glow-teal {
+  filter: drop-shadow(0 0 30px rgba(0, 212, 170, 0.4))
+    drop-shadow(0 0 60px rgba(0, 212, 170, 0.15));
+}
+
+.glow-text {
+  text-shadow: 0 0 40px rgba(212, 168, 83, 0.5),
+    0 0 80px rgba(212, 168, 83, 0.3), 0 0 120px rgba(212, 168, 83, 0.1);
+}
+
+/* Particle layer */
+.particle-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Scent note tags */
+.scent-note {
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+/* CTA Button */
+.cta-button {
+  position: relative;
+  padding: 14px 36px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.cta-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 168, 83, 0.15),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.cta-button:hover {
+  background: rgba(212, 168, 83, 0.08);
+  box-shadow: 0 0 30px rgba(212, 168, 83, 0.2);
+}
+
+.cta-button:hover::before {
+  left: 100%;
+}
+
+/* Liquid fill input */
+.liquid-input {
+  position: relative;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: white;
+  transition: all 0.4s ease;
+}
+
+.liquid-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(212, 168, 83, 0.15);
+  outline: none;
+}
+
+.liquid-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.1em;
+}
+
+/* Hero responsive text */
+.hero-title {
+  font-size: clamp(4rem, 18vw, 16rem);
+  line-height: 0.85;
+}
+
+@media (min-width: 640px) {
+  .hero-title {
+    font-size: clamp(6rem, 14vw, 16rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-title {
+    font-size: clamp(8rem, 12vw, 16rem);
   }
 }
