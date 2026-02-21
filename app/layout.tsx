@@ -14,6 +14,9 @@ export const metadata: Metadata = {
     "eau de parfum",
     "cosmic fragrance",
   ],
+  icons: {
+    icon: "/favicon.svg",
+  },
   openGraph: {
     title: "LUNE — Cosmic Fragrances",
     description: "Jupiter & Pluto. Two universes. One brand.",

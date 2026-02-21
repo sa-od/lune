@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "@/app/lib/gsap";
+import Logo from "./Logo";
 
 export default function Footer() {
   const footerRef = useRef<HTMLElement>(null);
@@ -46,16 +47,13 @@ export default function Footer() {
     >
       <div className="footer-content max-w-2xl mx-auto text-center">
         {/* Brand */}
-        <h3 className="font-serif text-2xl sm:text-3xl text-gold-gradient tracking-[0.3em] mb-2">
-          LUNE
-        </h3>
-        <div
-          className="w-16 h-px mx-auto mb-5"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, rgba(212,168,83,0.4), transparent)",
-          }}
-        />
+        <div className="flex justify-center mb-5">
+          <Logo
+            showText
+            color="#d4a853"
+            className="w-[140px] sm:w-[170px] glow-gold opacity-80"
+          />
+        </div>
         <p className="text-white/25 text-[0.65rem] tracking-[0.3em] uppercase mb-12">
           Cosmic Fragrances for the Modern Soul
         </p>

@@ -3,10 +3,11 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/app/lib/gsap";
 import PerfumeBottle from "./PerfumeBottle";
+import Logo from "./Logo";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const jupiterBottleRef = useRef<SVGSVGElement>(null);
@@ -163,12 +164,16 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 text-center" style={{ perspective: "1000px" }}>
-        <h1
+        <div
           ref={titleRef}
-          className="hero-title font-serif font-black text-gold-gradient tracking-[0.15em] sm:tracking-[0.2em] mb-4 glow-text will-change-transform"
+          className="mb-4 will-change-transform flex justify-center"
         >
-          LUNE
-        </h1>
+          <Logo
+            showText
+            color="#d4a853"
+            className="w-[280px] sm:w-[360px] md:w-[450px] lg:w-[550px] glow-gold"
+          />
+        </div>
 
         <div
           ref={lineRef}
