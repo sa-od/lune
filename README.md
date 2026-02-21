@@ -1,10 +1,11 @@
 # Jupiter & Pluto Perfume Landing Page
 
-Ultra-animated Next.js 14 landing page for luxury perfumes **Jupiter** (woody amber) & **Pluto** (marine citrus). GSAP ScrollTrigger, cosmic theme, fully responsive.
+**[shoplune.in](https://shoplune.in)** - Ultra-animated Next.js 14 landing page for luxury perfumes **Jupiter** (woody amber) & **Pluto** (marine citrus). GSAP ScrollTrigger, cosmic theme, fully responsive.
 
 ## 🚀 Quick Start
 
 ```bash
-git clone <repo>
+git clone <your-repo-url>
+cd jupiter-pluto-perfumes
 npm install
 npm run dev
