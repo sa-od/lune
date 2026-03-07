@@ -178,7 +178,17 @@ export default function PlutoSection() {
       {/* Content */}
       <div className="relative z-10 min-h-screen flex flex-col lg:flex-row-reverse items-center justify-center gap-10 lg:gap-20 px-6 sm:px-10 md:px-16 lg:px-24 py-24">
         {/* Bottle */}
-        <div className="relative flex-shrink-0">
+        <div className="relative flex-shrink-0 w-52 h-52 md:w-80 md:h-80">
+          <div
+            className="absolute inset-0 rounded-full overflow-hidden pointer-events-none"
+            style={{
+              backgroundImage: "url(/pluto.jpeg)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              opacity: 0.35,
+            }}
+          />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-t from-black/30 via-transparent to-pluto-teal/20 pointer-events-none" />
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-52 h-52 md:w-80 md:h-80 rounded-full bg-pluto-teal/[0.06] blur-3xl" />
           </div>

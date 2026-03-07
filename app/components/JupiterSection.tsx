@@ -51,23 +51,15 @@ export default function JupiterSection() {
             duration: 0.6,
             ease: "power2.out",
           },
-          "-=0.1"
+          "-=0.1",
         )
-        .from(
-          taglineRef.current,
-          { opacity: 0, y: 15, duration: 0.2 },
-          "-=0.3"
-        )
+        .from(taglineRef.current, { opacity: 0, y: 15, duration: 0.2 }, "-=0.3")
         .from(
           titleRef.current,
           { x: -100, opacity: 0, duration: 0.4, ease: "power3.out" },
-          "-=0.3"
+          "-=0.3",
         )
-        .from(
-          descRef.current,
-          { y: 40, opacity: 0, duration: 0.3 },
-          "-=0.2"
-        )
+        .from(descRef.current, { y: 40, opacity: 0, duration: 0.3 }, "-=0.2")
         .from(
           ".jupiter-note",
           {
@@ -76,18 +68,10 @@ export default function JupiterSection() {
             duration: 0.15,
             stagger: 0.04,
           },
-          "-=0.1"
+          "-=0.1",
         )
-        .from(
-          embersRef.current,
-          { opacity: 0, duration: 0.3 },
-          "-=0.5"
-        )
-        .from(
-          ".jupiter-cta",
-          { y: 20, opacity: 0, duration: 0.2 },
-          "-=0.1"
-        );
+        .from(embersRef.current, { opacity: 0, duration: 0.3 }, "-=0.5")
+        .from(".jupiter-cta", { y: 20, opacity: 0, duration: 0.2 }, "-=0.1");
 
       // Bottle parallax float on scroll
       gsap.to(bottleRef.current, {
@@ -157,7 +141,17 @@ export default function JupiterSection() {
       {/* Content */}
       <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-20 px-6 sm:px-10 md:px-16 lg:px-24 py-24">
         {/* Bottle */}
-        <div className="relative flex-shrink-0">
+        <div className="relative flex-shrink-0 w-52 h-52 md:w-80 md:h-80">
+          <div
+            className="absolute inset-0 rounded-full overflow-hidden pointer-events-none"
+            style={{
+              backgroundImage: "url(/jupiter.jpeg)",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              opacity: 0.35,
+            }}
+          />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-t from-jupiter-brown/40 via-transparent to-transparent pointer-events-none" />
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-52 h-52 md:w-80 md:h-80 rounded-full bg-jupiter-amber/8 blur-3xl" />
           </div>
