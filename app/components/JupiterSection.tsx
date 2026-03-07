@@ -18,6 +18,7 @@ const scentNotes = [
 export default function JupiterSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const bottleRef = useRef<SVGSVGElement>(null);
+  const bottleWrapperRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const notesRef = useRef<HTMLDivElement>(null);
@@ -43,7 +44,7 @@ export default function JupiterSection() {
         duration: 0.3,
       })
         .from(
-          bottleRef.current,
+          bottleWrapperRef.current,
           {
             y: 250,
             opacity: 0,
@@ -155,11 +156,16 @@ export default function JupiterSection() {
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-52 h-52 md:w-80 md:h-80 rounded-full bg-jupiter-amber/8 blur-3xl" />
           </div>
-          <PerfumeBottle
-            ref={bottleRef}
-            variant="jupiter"
-            className="w-32 sm:w-40 md:w-48 lg:w-56 relative z-10 glow-amber will-change-transform"
-          />
+          <div
+            ref={bottleWrapperRef}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
+          >
+            <PerfumeBottle
+              ref={bottleRef}
+              variant="jupiter"
+              className="w-32 sm:w-40 md:w-48 lg:w-56 glow-amber will-change-transform"
+            />
+          </div>
         </div>
 
         {/* Text */}
