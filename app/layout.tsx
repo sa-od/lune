@@ -51,9 +51,7 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
       </head>
-      <body className="bg-cosmic-black text-white antialiased">
-        {children}
-      </body>
+      <body className="bg-cosmic-black text-white antialiased">{children}</body>
     </html>
   );
 }

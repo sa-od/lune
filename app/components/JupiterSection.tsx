@@ -141,7 +141,7 @@ export default function JupiterSection() {
       {/* Content */}
       <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-20 px-6 sm:px-10 md:px-16 lg:px-24 py-24">
         {/* Bottle */}
-        <div className="relative flex-shrink-0 w-52 h-52 md:w-80 md:h-80">
+        <div className="relative flex-shrink-0 w-52 h-52 md:w-80 md:h-80 self-start ml-6 lg:ml-0 lg:self-center">
           <div
             className="absolute inset-0 rounded-full overflow-hidden pointer-events-none"
             style={{
