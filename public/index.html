@@ -23,14 +23,15 @@
     body {
       font-family: "Helvetica Regular", "Helvetica Neue", Helvetica, Arial, sans-serif;
       background: #000;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ── Liquid Glass ── */
     .liquid-glass {
-      background: rgba(255, 255, 255, 0.01);
+      background: rgba(255,255,255,0.01);
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
       position: relative;
       overflow: hidden;
     }
@@ -64,8 +65,8 @@
     }
     @media (max-width: 768px) {
       .bg-video-el {
-        width: max(100vw, 140vh);
-        height: max(71vw, 100vh);
+        height: 78vh;
+        width: max(100vw, calc(78vh * 1924 / 1076));
       }
     }
 
@@ -99,62 +100,134 @@
       animation: chevronDrift 1.8s ease-in-out infinite;
     }
 
-    /* ── Card fade-up ── */
+    /* ── Animations ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(32px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-    .card-in {
-      animation: fadeUp 1.2s cubic-bezier(0.16,1,0.3,1) 0.15s both;
-    }
-
-    /* ── First viewport brand (appear after 3s) ── */
+    .card-in  { animation: fadeUp 1.2s cubic-bezier(0.16,1,0.3,1) 0.15s both; }
     .vp1-tag  { animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) 3s both; }
+    .fade-in  { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both; }
 
-    /* ── WhatsApp button pulse ring ── */
+    /* ── WhatsApp pulse ── */
     @keyframes pulse {
       0%   { box-shadow: 0 0 0 0 rgba(37,211,102,0.4); }
       70%  { box-shadow: 0 0 0 10px rgba(37,211,102,0); }
       100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
     }
-    .wa-btn {
-      animation: pulse 2.4s ease-out infinite;
+    .wa-btn { animation: pulse 2.4s ease-out infinite; }
+
+    /* ── Mobile sky / grass bands ── */
+    .mobile-band {
+      display: none;
+      position: fixed;
+      left: 0; right: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    @media (max-width: 768px) {
+      .mobile-band { display: block; }
+      .mobile-band-top {
+        top: 0; height: 11vh;
+        background: rgba(138, 172, 196, 0.82);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow:
+          inset 0 1px 0 rgba(220,242,255,0.45),
+          inset 0 -1px 0 rgba(170,210,232,0.4),
+          0 2px 16px rgba(138,172,196,0.25);
+      }
+      .mobile-band-bottom {
+        bottom: 0; height: 11vh;
+        background: rgba(56, 92, 26, 0.82);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow:
+          inset 0 1px 0 rgba(105,185,68,0.35),
+          inset 0 -1px 0 rgba(80,150,45,0.25),
+          0 -2px 16px rgba(56,92,26,0.25);
+      }
+    }
+
+    /* ── Gallery (products page) ── */
+    .gallery-scroll {
+      display: flex;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .gallery-scroll::-webkit-scrollbar { display: none; }
+    .gallery-slide {
+      flex: 0 0 100%;
+      scroll-snap-align: start;
     }
 
     a { cursor: pointer; text-decoration: none; }
+    button { font-family: inherit; }
+    img { display: block; }
   </style>
 </head>
 <body>
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
-/* ── LUNE brand mark ── */
-function LuneMark({ size = 28 }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
-      <path d="M 4.688 136 C 68.373 136 120 187.627 120 251.312 C 120 252.883 119.967 254.445 119.905 256 L 0 256 L 0 136.096 C 1.555 136.034 3.117 136 4.688 136 Z M 251.312 136 C 252.883 136 254.445 136.034 256 136.096 L 256 256 L 136.095 256 C 136.032 254.438 136.001 252.875 136 251.312 C 136 187.627 187.627 136 251.312 136 Z M 119.905 0 C 119.967 1.555 120 3.117 120 4.688 C 120 68.373 68.373 120 4.687 120 C 3.117 120 1.555 119.967 0 119.905 L 0 0 Z M 256 119.905 C 254.445 119.967 252.883 120 251.312 120 C 187.627 120 136 68.373 136 4.687 C 136 3.117 136.033 1.555 136.095 0 L 256 0 Z" />
-    </svg>
-  );
-}
+/* ── Perfume data ── */
+const perfumes = [
+  {
+    id: 'jupitor',
+    name: 'JUPITOR',
+    subtitle: 'Celestial Warmth',
+    edp: 'Eau de Parfum · 50 ml',
+    description: 'A solar warmth born from the largest of planets. Bergamot opens into jasmine petals, settling gently on aged sandalwood and warm amber.',
+    notes: [
+      { label: 'Top',   value: 'Bergamot · Citrus' },
+      { label: 'Heart', value: 'Jasmine · Neroli' },
+      { label: 'Base',  value: 'Sandalwood · Amber' },
+    ],
+    images: ['jupitor/sky.png', 'jupitor/flower.png', 'jupitor/grass.png', 'jupitor/stone.png'],
+  },
+  {
+    id: 'pluto',
+    name: 'PLUTO',
+    subtitle: 'Cold Mystery',
+    edp: 'Eau de Parfum · 50 ml',
+    description: 'A cold mystery from the edge of the cosmos. Black pepper and iris cut through the dark, grounded by deep vetiver and white musk.',
+    notes: [
+      { label: 'Top',   value: 'Black Pepper · Cardamom' },
+      { label: 'Heart', value: 'Iris · Violet' },
+      { label: 'Base',  value: 'Vetiver · White Musk' },
+    ],
+    images: ['pluto/sky.png', 'pluto/flower.png', 'pluto/grass.png', 'pluto/stone.png'],
+  },
+];
 
-/* ── WhatsApp icon ── */
-function IconWhatsApp({ size = 20 }) {
+/* ── Icons ── */
+function IconWhatsApp({ size = 18 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
     </svg>
   );
 }
+function IconInstagram({ size = 15 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+    </svg>
+  );
+}
 
-/* ── Smooth scroll (rAF, EASE = 0.04 for premium feel) ── */
+/* ── Smooth scroll (home only) ── */
 function useSmoothScroll() {
   useEffect(() => {
     let target = window.scrollY, current = window.scrollY;
     let rafId = null, running = false;
     const EASE = 0.04;
-
     const onWheel = (e) => {
       if (e.ctrlKey || e.metaKey) return;
       e.preventDefault();
@@ -162,7 +235,6 @@ function useSmoothScroll() {
       target = Math.max(0, Math.min(max, target + e.deltaY));
       if (!running) loop();
     };
-
     const onKey = (e) => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const vh = window.innerHeight;
@@ -178,7 +250,6 @@ function useSmoothScroll() {
       e.preventDefault();
       if (!running) loop();
     };
-
     const loop = () => {
       running = true;
       const diff = target - current;
@@ -187,16 +258,13 @@ function useSmoothScroll() {
       window.scrollTo(0, current);
       rafId = requestAnimationFrame(loop);
     };
-
     const onScroll = () => { if (!running) { current = window.scrollY; target = window.scrollY; } };
-
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
     if (!isTouch) {
       window.addEventListener("wheel", onWheel, { passive: false });
       window.addEventListener("keydown", onKey);
     }
     window.addEventListener("scroll", onScroll, { passive: true });
-
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
@@ -209,15 +277,9 @@ function useSmoothScroll() {
 /* ── Scroll indicator ── */
 function ScrollIndicator({ onClick }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label="Scroll to content"
-      className="liquid-glass scroll-indicator"
-    >
+    <button type="button" onClick={onClick} aria-label="Scroll to content" className="liquid-glass scroll-indicator">
       <span className="chevrons">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <polyline points="6 9 12 15 18 9" />
           <polyline points="6 14 12 20 18 14" />
         </svg>
@@ -226,246 +288,270 @@ function ScrollIndicator({ onClick }) {
   );
 }
 
-/* ── Instagram icon ── */
-function IconInstagram({ size = 18 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-    </svg>
-  );
-}
+/* ── Gallery ── */
+function Gallery({ images, name }) {
+  const [active, setActive] = useState(0);
+  const scrollRef = useRef(null);
 
-/* ── Main card content ── */
-function Card() {
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) setActive(Number(e.target.dataset.idx)); }),
+      { root: el, threshold: 0.55 }
+    );
+    Array.from(el.children).forEach(s => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
+  const goTo = (i) => {
+    const el = scrollRef.current;
+    if (el) el.scrollTo({ left: el.offsetWidth * i, behavior: 'smooth' });
+  };
 
   return (
-    <div
-      className="liquid-glass card-in"
-      style={{
-        borderRadius: "1.5rem",
-        width: "100%",
-        maxWidth: "640px",
-        padding: "3rem 2.5rem 2rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "0",
-        color: "rgba(255,255,255,0.85)",
-      }}
-    >
-      {/* Brand */}
-      <div style={{ marginBottom: "2.25rem" }}>
-        <span style={{ fontSize: "1.25rem", fontWeight: 500, letterSpacing: "0.22em", color: "#fff" }}>
-          LUNE
-        </span>
+    <div>
+      <div ref={scrollRef} className="gallery-scroll">
+        {images.map((src, i) => (
+          <div key={i} data-idx={String(i)} className="gallery-slide">
+            <img src={src} alt={`${name} — ${i + 1}`} style={{ width: '100%', height: 'clamp(300px, 68vw, 640px)', objectFit: 'cover' }} />
+          </div>
+        ))}
       </div>
-
-      {/* Eyebrow */}
-      <p style={{
-        fontSize: "0.6875rem",
-        textTransform: "uppercase",
-        letterSpacing: "0.28em",
-        color: "rgba(255,255,255,0.45)",
-        marginBottom: "0.875rem",
-      }}>
-        Celestial Fragrances
-      </p>
-
-      {/* Headline */}
-      <h1 style={{
-        fontSize: "clamp(2rem, 5vw, 3rem)",
-        fontWeight: 500,
-        color: "#fff",
-        lineHeight: 1.1,
-        letterSpacing: "-0.02em",
-        marginBottom: "1rem",
-      }}>
-        We don't create many<br />fragrances. We create<br />the right ones.
-      </h1>
-
-      {/* Sub */}
-      <p style={{
-        fontSize: "0.9375rem",
-        color: "rgba(255,255,255,0.55)",
-        lineHeight: 1.7,
-        marginBottom: "2.5rem",
-        maxWidth: "26rem",
-      }}>
-        Two scents born from the cosmos — Jupitor and Pluto. Order directly and we'll take care of the rest.
-      </p>
-
-      {/* Primary CTA — WhatsApp */}
-      <a
-        href="https://wa.me/918111811709"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="wa-btn"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "0.625rem",
-          borderRadius: "9999px",
-          padding: "0.9rem 2rem",
-          fontSize: "0.9375rem",
-          fontWeight: 500,
-          color: "#fff",
-          background: "rgba(37,211,102,0.18)",
-          border: "1px solid rgba(37,211,102,0.45)",
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
-          width: "fit-content",
-          marginBottom: "2.5rem",
-          transition: "background 0.2s, border-color 0.2s",
-          cursor: "pointer",
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.background = "rgba(37,211,102,0.28)";
-          e.currentTarget.style.borderColor = "rgba(37,211,102,0.7)";
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = "rgba(37,211,102,0.18)";
-          e.currentTarget.style.borderColor = "rgba(37,211,102,0.45)";
-        }}
-      >
-        <IconWhatsApp size={18} />
-        Order on WhatsApp
-      </a>
-
-      {/* Divider */}
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.08)", marginBottom: "1.5rem" }} />
-
-      {/* Bottom bar */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "0.75rem",
-      }}>
-        <p style={{ fontSize: "0.625rem", textTransform: "uppercase", letterSpacing: "0.18em", color: "rgba(255,255,255,0.25)" }}>
-          © {new Date().getFullYear()} LUNE
-        </p>
-        <a
-          href="https://www.instagram.com/lune_perfumes_/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            fontSize: "0.75rem",
-            letterSpacing: "0.08em",
-            color: "rgba(255,255,255,0.45)",
-            transition: "color 0.2s",
-          }}
-          onMouseEnter={e => e.currentTarget.style.color = "rgba(255,255,255,0.9)"}
-          onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.45)"}
-        >
-          <IconInstagram size={15} />
-          @lune_perfumes_
-        </a>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.45rem', padding: '1.1rem 0 0.5rem' }}>
+        {images.map((_, i) => (
+          <button key={i} onClick={() => goTo(i)} aria-label={`Image ${i + 1}`} style={{
+            width: i === active ? '26px' : '6px', height: '6px',
+            borderRadius: '9999px',
+            background: i === active ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.22)',
+            border: 'none', cursor: 'pointer', padding: 0,
+            transition: 'all 0.38s cubic-bezier(0.16,1,0.3,1)',
+          }} />
+        ))}
       </div>
     </div>
   );
 }
 
-/* ── App ── */
-function App() {
-  useSmoothScroll();
+/* ── Product section ── */
+function ProductSection({ perfume, isLast }) {
+  return (
+    <section style={{ paddingBottom: isLast ? '2rem' : '5rem', borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.055)', marginBottom: isLast ? 0 : '5rem' }}>
+      <div style={{ padding: '3.5rem 1.5rem 1.25rem' }}>
+        <p style={{ fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.3)', marginBottom: '0.6rem' }}>{perfume.edp}</p>
+        <h2 style={{ fontSize: 'clamp(2.5rem, 10vw, 5rem)', fontWeight: 500, letterSpacing: '0.1em', color: '#fff', lineHeight: 1 }}>{perfume.name}</h2>
+        <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)' }}>{perfume.subtitle}</p>
+      </div>
 
+      <Gallery images={perfume.images} name={perfume.name} />
+
+      <div style={{ padding: '1.25rem 1.5rem 0' }}>
+        <div className="liquid-glass" style={{ borderRadius: '1.25rem', padding: '1.875rem 1.625rem', color: 'rgba(255,255,255,0.85)' }}>
+          <p style={{ fontSize: '0.9375rem', lineHeight: 1.78, color: 'rgba(255,255,255,0.55)', marginBottom: '1.75rem' }}>{perfume.description}</p>
+          <div style={{ marginBottom: '2rem' }}>
+            {perfume.notes.map((n, i) => (
+              <div key={n.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '0.65rem 0', borderBottom: i < perfume.notes.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+                <span style={{ fontSize: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.24em', color: 'rgba(255,255,255,0.28)' }}>{n.label}</span>
+                <span style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.6)' }}>{n.value}</span>
+              </div>
+            ))}
+          </div>
+          <a href="https://wa.me/918111811709" target="_blank" rel="noopener noreferrer" className="wa-btn" style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem',
+            borderRadius: '9999px', padding: '0.875rem 1.75rem', fontSize: '0.875rem', fontWeight: 500,
+            color: '#fff', background: 'rgba(37,211,102,0.18)', border: '1px solid rgba(37,211,102,0.45)',
+            backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+            transition: 'background 0.2s, border-color 0.2s',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background='rgba(37,211,102,0.28)'; e.currentTarget.style.borderColor='rgba(37,211,102,0.7)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background='rgba(37,211,102,0.18)'; e.currentTarget.style.borderColor='rgba(37,211,102,0.45)'; }}
+          >
+            <IconWhatsApp size={17} />
+            Order {perfume.name} on WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ══════════════════════════════════
+   HOME PAGE
+══════════════════════════════════ */
+function HomePage({ navigate }) {
+  useSmoothScroll();
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const fn = () => { if (window.scrollY > 2) setScrolled(true); };
-    window.addEventListener("scroll", fn, { passive: true });
-    return () => window.removeEventListener("scroll", fn);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
   }, []);
-
-  const scrollToContent = () => {
-    window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
-  };
+  const scrollToContent = () => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
 
   return (
-    <main style={{
-      position: "relative",
-      width: "100%",
-      overflowX: "hidden",
-      fontFamily: '"Helvetica Regular", "Helvetica Neue", Helvetica, Arial, sans-serif',
-    }}>
+    <main style={{ position: 'relative', width: '100%', overflowX: 'hidden', fontFamily: '"Helvetica Regular", "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
       {/* Fixed video background */}
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none", background: "#000" }}>
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none', background: 'linear-gradient(to bottom, #B8D4E6 0%, #000 13%, #000 87%, #4E7A2A 100%)' }}>
         <video poster="background.png" src="palindrome.mp4" className="bg-video-el" autoPlay loop muted playsInline preload="auto" />
       </div>
 
       {/* Dark overlay */}
-      <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.30)", zIndex: 1, pointerEvents: "none" }} />
+      <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.30)', zIndex: 1, pointerEvents: 'none' }} />
 
-      {/* First viewport — brand hero */}
-      <section style={{
-        position: "relative",
-        width: "100%",
-        height: "100vh",
-        zIndex: 2,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingBottom: "24vh",
-      }}>
-        {/* Top-right: tagline + fragrances */}
-        <div className="vp1-tag" style={{
-          position: "absolute",
-          top: "2.25rem",
-          right: "2.5rem",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-end",
-          gap: "0.45rem",
-        }}>
-          <span style={{
-            fontSize: "0.625rem",
-            textTransform: "uppercase",
-            letterSpacing: "0.3em",
-            color: "rgba(255,255,255,0.38)",
-          }}>
-            Celestial Fragrances
-          </span>
-          <div style={{ width: "100%", height: "1px", background: "rgba(255,255,255,0.18)" }} />
-          <span style={{
-            fontSize: "1rem",
-            textTransform: "uppercase",
-            letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.65)",
-          }}>Jupitor</span>
-          <span style={{
-            fontSize: "1rem",
-            textTransform: "uppercase",
-            letterSpacing: "0.2em",
-            color: "rgba(255,255,255,0.65)",
-          }}>Pluto</span>
+      {/* Mobile bands */}
+      <div className="mobile-band mobile-band-top" />
+      <div className="mobile-band mobile-band-bottom" />
+
+      {/* First viewport */}
+      <section style={{ position: 'relative', width: '100%', height: '100vh', zIndex: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingBottom: '24vh' }}>
+        <div className="vp1-tag" style={{ position: 'absolute', top: '2.25rem', right: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.45rem' }}>
+          <span style={{ fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.38)' }}>Celestial Fragrances</span>
+          <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.18)' }} />
+          <span style={{ fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.65)' }}>Jupitor</span>
+          <span style={{ fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.65)' }}>Pluto</span>
         </div>
       </section>
 
-      {/* Scroll indicator */}
       {!scrolled && <ScrollIndicator onClick={scrollToContent} />}
 
-      {/* Second viewport — single glass card, centred */}
-      <section style={{
-        position: "relative",
-        zIndex: 10,
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "4rem 1.5rem",
-      }}>
-        <Card />
+      {/* Second viewport — card */}
+      <section style={{ position: 'relative', zIndex: 10, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem 1.5rem' }}>
+        <div className="liquid-glass card-in" style={{ borderRadius: '1.5rem', width: '100%', maxWidth: '640px', padding: '3rem 2.5rem 2rem', display: 'flex', flexDirection: 'column', color: 'rgba(255,255,255,0.85)' }}>
+          <div style={{ marginBottom: '2.25rem' }}>
+            <span style={{ fontSize: '1.25rem', fontWeight: 500, letterSpacing: '0.22em', color: '#fff' }}>LUNE</span>
+          </div>
+          <p style={{ fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.28em', color: 'rgba(255,255,255,0.45)', marginBottom: '0.875rem' }}>Celestial Fragrances</p>
+          <h1 style={{ fontSize: 'clamp(2rem,5vw,3rem)', fontWeight: 500, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: '1rem' }}>
+            We don't create many<br />fragrances. We create<br />the right ones.
+          </h1>
+          <p style={{ fontSize: '0.9375rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, marginBottom: '2.5rem', maxWidth: '26rem' }}>
+            Two scents born from the cosmos — Jupitor and Pluto. Order directly and we'll take care of the rest.
+          </p>
+
+          {/* Primary CTA */}
+          <button
+            onClick={() => navigate('/products')}
+            style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.625rem',
+              borderRadius: '9999px', padding: '0.9rem 2.25rem',
+              fontSize: '0.875rem', fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase',
+              color: '#fff', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.18)',
+              backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+              width: 'fit-content', marginBottom: '2.5rem', cursor: 'pointer',
+              transition: 'background 0.2s, border-color 0.2s',
+              fontFamily: 'inherit',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background='rgba(255,255,255,0.14)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.35)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.18)'; }}
+          >
+            View Collection
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)', marginBottom: '1.5rem' }} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+            <p style={{ fontSize: '0.625rem', textTransform: 'uppercase', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.25)' }}>© {new Date().getFullYear()} LUNE</p>
+            <a href="https://www.instagram.com/lune_perfumes_/" target="_blank" rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.45)', transition: 'color 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.9)'}
+              onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.45)'}
+            >
+              <IconInstagram size={15} />
+              @lune_perfumes_
+            </a>
+          </div>
+        </div>
       </section>
     </main>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+/* ══════════════════════════════════
+   PRODUCTS PAGE
+══════════════════════════════════ */
+function ProductsPage({ navigate }) {
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#080808', fontFamily: '"Helvetica Regular", "Helvetica Neue", Helvetica, Arial, sans-serif', color: '#fff' }}>
+      <div style={{ position: 'fixed', inset: 0, background: 'radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255,255,255,0.025) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
+
+      {/* Header */}
+      <header className="liquid-glass" style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem', height: '54px' }}>
+        <button onClick={() => navigate('/')} style={{
+          fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.22em',
+          color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.4rem',
+          background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+          transition: 'color 0.2s',
+        }}
+          onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.8)'}
+          onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.4)'}
+        >
+          ← Home
+        </button>
+        <span style={{ fontSize: '0.8125rem', fontWeight: 500, letterSpacing: '0.24em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.85)' }}>LUNE</span>
+        <div style={{ width: '48px' }} />
+      </header>
+
+      {/* Intro */}
+      <div style={{ position: 'relative', zIndex: 1, padding: '3rem 1.5rem 0' }}>
+        <p style={{ fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.28)', marginBottom: '0.5rem' }}>The Collection</p>
+        <h1 style={{ fontSize: 'clamp(1.5rem,5vw,2.75rem)', fontWeight: 500, letterSpacing: '0.04em', color: 'rgba(255,255,255,0.88)' }}>Celestial Fragrances</h1>
+        <div style={{ marginTop: '1.25rem', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+      </div>
+
+      {/* Products */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {perfumes.map((p, i) => <ProductSection key={p.id} perfume={p} isLast={i === perfumes.length - 1} />)}
+      </div>
+
+      {/* Footer */}
+      <footer style={{ position: 'relative', zIndex: 1, padding: '2.5rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.055)', marginTop: '2rem' }}>
+        <p style={{ fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.2)' }}>© {new Date().getFullYear()} LUNE</p>
+        <a href="https://www.instagram.com/lune_perfumes_/" target="_blank" rel="noopener noreferrer"
+          style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.6875rem', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.28)', transition: 'color 0.2s' }}
+          onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
+          onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}
+        >
+          <IconInstagram size={13} />
+          @lune_perfumes_
+        </a>
+      </footer>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════
+   ROUTER
+══════════════════════════════════ */
+function App() {
+  const [view, setView] = useState(() =>
+    window.location.pathname.startsWith('/products') ? 'products' : 'home'
+  );
+
+  const navigate = (path) => {
+    history.pushState({}, '', path);
+    window.scrollTo(0, 0);
+    setView(path.startsWith('/products') ? 'products' : 'home');
+  };
+
+  useEffect(() => {
+    const onPop = () => {
+      window.scrollTo(0, 0);
+      setView(window.location.pathname.startsWith('/products') ? 'products' : 'home');
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  return view === 'products'
+    ? <ProductsPage navigate={navigate} />
+    : <HomePage navigate={navigate} />;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
 </body>
 </html>
