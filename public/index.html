@@ -276,11 +276,11 @@ const perfumes = [
     edp: 'Eau de Parfum · 50 ml',
     description: 'A solar warmth born from the largest of planets. Bergamot opens into jasmine petals, settling gently on aged sandalwood and warm amber.',
     notes: [
-      { label: 'Top',   value: 'Bergamot · Citrus' },
-      { label: 'Heart', value: 'Jasmine · Neroli' },
-      { label: 'Base',  value: 'Sandalwood · Amber' },
+      { label: 'Top',    value: 'Cardamom · Pink Pepper' },
+      { label: 'Heart',  value: 'Aromatic Herbs · Oakmoss' },
+      { label: 'Base',   value: 'Amber · Cedarwood · Smoked Wood' },
     ],
-    images: ['jupitor/grass.png', 'jupitor/stone.png'],
+    images: ['jupitor/stone.png', 'jupitor/grass.png'],
   },
   {
     id: 'pluto',
@@ -289,9 +289,9 @@ const perfumes = [
     edp: 'Eau de Parfum · 50 ml',
     description: 'A cold mystery from the edge of the cosmos. Black pepper and iris cut through the dark, grounded by deep vetiver and white musk.',
     notes: [
-      { label: 'Top',   value: 'Black Pepper · Cardamom' },
-      { label: 'Heart', value: 'Iris · Violet' },
-      { label: 'Base',  value: 'Vetiver · White Musk' },
+      { label: 'Top',    value: 'Bergamot · Sea Salt · Citrus' },
+      { label: 'Heart',  value: 'Lavender · Green Herbs · Spice' },
+      { label: 'Base',   value: 'Cedarwood · Aldehydes · Musk' },
     ],
     images: ['pluto/sky.png', 'pluto/flower.png'],
   },
@@ -443,25 +443,24 @@ function ProductSection({ perfume, isLast, index }) {
               }} />
 
               {/* Gallery carousel */}
-              <div ref={scrollRef} className="gallery-scroll" style={{
-                position: 'relative', zIndex: 1,
-                borderRadius: '1.5rem', overflow: 'hidden',
-              }}>
-                {perfume.images.map((src, i) => (
-                  <div key={i} data-idx={String(i)} className="gallery-slide">
-                    {/* Soft warm vignette */}
-                    <div style={{
-                      position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
-                      background: 'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 50%, rgba(237,235,231,0.42) 100%)',
-                    }} />
-                    <img src={src} alt={`${perfume.name} — ${i + 1}`} style={{
-                      width: '100%', height: '72vh',
-                      objectFit: 'contain',
-                      background: 'rgba(243,239,231,0.35)',
-                      display: 'block',
-                    }} />
-                  </div>
-                ))}
+              <div style={{ position: 'relative', zIndex: 1, borderRadius: '1.5rem', overflow: 'hidden' }}>
+                <div ref={scrollRef} className="gallery-scroll">
+                  {perfume.images.map((src, i) => (
+                    <div key={i} data-idx={String(i)} className="gallery-slide">
+                      {/* Soft warm vignette */}
+                      <div style={{
+                        position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none',
+                        background: 'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 50%, rgba(237,235,231,0.42) 100%)',
+                      }} />
+                      <img src={src} alt={`${perfume.name} — ${i + 1}`} style={{
+                        width: '100%', height: '72vh',
+                        objectFit: 'contain',
+                        background: 'rgba(243,239,231,0.35)',
+                        display: 'block',
+                      }} />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -472,9 +471,9 @@ function ProductSection({ perfume, isLast, index }) {
             }}>
               {perfume.images.map((_, i) => (
                 <button key={i} onClick={() => goTo(i)} aria-label={`Image ${i + 1}`} style={{
-                  width: i === active ? '30px' : '6px', height: '1px',
+                  width: i === active ? '28px' : '7px', height: '3px',
                   borderRadius: '9999px',
-                  background: i === active ? 'rgba(31,37,45,0.55)' : 'rgba(31,37,45,0.18)',
+                  background: i === active ? 'rgba(31,37,45,0.72)' : 'rgba(31,37,45,0.22)',
                   border: 'none', cursor: 'pointer', padding: 0,
                   transition: 'all 0.5s cubic-bezier(0.16,1,0.3,1)',
                 }} />
@@ -533,22 +532,22 @@ function ProductSection({ perfume, isLast, index }) {
                   borderRadius: '9999px',
                   fontSize: '0.625rem', fontWeight: 400, letterSpacing: '0.18em',
                   textTransform: 'uppercase',
-                  color: 'rgba(31,37,45,0.65)',
-                  background: 'rgba(31,37,45,0.05)',
-                  border: '1px solid rgba(31,37,45,0.1)',
+                  color: 'rgba(22,120,58,0.88)',
+                  background: 'rgba(26,158,74,0.09)',
+                  border: '1px solid rgba(26,158,74,0.22)',
                   backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
                   transition: 'background 0.35s, border-color 0.35s, color 0.35s, transform 0.35s',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = 'rgba(26,158,74,0.14)';
-                  e.currentTarget.style.borderColor = 'rgba(26,158,74,0.32)';
-                  e.currentTarget.style.color = 'rgba(31,37,45,0.9)';
+                  e.currentTarget.style.background = 'rgba(26,158,74,0.18)';
+                  e.currentTarget.style.borderColor = 'rgba(26,158,74,0.4)';
+                  e.currentTarget.style.color = 'rgba(18,100,48,1)';
                   e.currentTarget.style.transform = 'translateY(-3px)';
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.background = 'rgba(31,37,45,0.05)';
-                  e.currentTarget.style.borderColor = 'rgba(31,37,45,0.1)';
-                  e.currentTarget.style.color = 'rgba(31,37,45,0.65)';
+                  e.currentTarget.style.background = 'rgba(26,158,74,0.09)';
+                  e.currentTarget.style.borderColor = 'rgba(26,158,74,0.22)';
+                  e.currentTarget.style.color = 'rgba(22,120,58,0.88)';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
