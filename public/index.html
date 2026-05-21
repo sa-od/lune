@@ -107,7 +107,7 @@
       to   { opacity: 1; transform: translateY(0); }
     }
     .card-in  { animation: fadeUp 1.2s cubic-bezier(0.16,1,0.3,1) 0.15s both; }
-    .vp1-tag  { animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) 3s both; }
+    .vp1-tag  { animation: fadeUp 1.1s cubic-bezier(0.16,1,0.3,1) 1s both; }
     .fade-in  { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both; }
 
     /* ── WhatsApp pulse ── */
@@ -126,6 +126,7 @@
       z-index: 10;
     }
     @media (max-width: 768px) {
+      .dark-overlay { top: 11vh !important; }
       .vp1-tag { top: calc(11vh + 0.875rem) !important; }
       .mobile-band {
         display: flex;
@@ -136,13 +137,9 @@
       }
       .mobile-band-top {
         top: 0; height: 11vh;
-        background: rgba(255,255,255,0.07);
-        backdrop-filter: saturate(180%) blur(28px);
-        -webkit-backdrop-filter: saturate(180%) blur(28px);
-        border-bottom: 1px solid rgba(255,255,255,0.2);
-        box-shadow:
-          inset 0 1px 0 rgba(255,255,255,0.32),
-          inset 0 -1px 0 rgba(255,255,255,0.06);
+        background:
+          linear-gradient(rgba(0,0,0,0.30), rgba(0,0,0,0.30)),
+          url('sky-bg.png') center top / cover no-repeat;
       }
     }
 
@@ -422,7 +419,7 @@ function HomePage({ navigate }) {
       </div>
 
       {/* Dark overlay */}
-      <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.30)', zIndex: 1, pointerEvents: 'none' }} />
+      <div className="dark-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.30)', zIndex: 1, pointerEvents: 'none' }} />
 
       {/* Mobile nav band */}
       <div className="mobile-band mobile-band-top">
