@@ -163,6 +163,18 @@
       scroll-snap-align: start;
     }
 
+    /* ── Product two-column layout ── */
+    .product-layout {
+      display: flex;
+      gap: 2.5rem;
+      align-items: flex-start;
+    }
+    .product-col-gallery { flex: 1 1 0; min-width: 0; }
+    .product-col-info { flex: 1 1 0; min-width: 0; }
+    @media (max-width: 768px) {
+      .product-layout { flex-direction: column; gap: 0; }
+    }
+
     a { cursor: pointer; text-decoration: none; }
     button { font-family: inherit; }
     img { display: block; }
@@ -187,7 +199,7 @@ const perfumes = [
       { label: 'Heart', value: 'Jasmine · Neroli' },
       { label: 'Base',  value: 'Sandalwood · Amber' },
     ],
-    images: ['jupitor/sky.png', 'jupitor/flower.png', 'jupitor/grass.png', 'jupitor/stone.png'],
+    images: ['jupitor/stone.png', 'jupitor/grass.png', 'jupitor/flower.png', 'jupitor/sky.png'],
   },
   {
     id: 'pluto',
@@ -288,8 +300,8 @@ function ScrollIndicator({ onClick }) {
   );
 }
 
-/* ── Gallery ── */
-function Gallery({ images, name }) {
+/* ── Product section ── */
+function ProductSection({ perfume, isLast }) {
   const [active, setActive] = useState(0);
   const scrollRef = useRef(null);
 
@@ -297,7 +309,9 @@ function Gallery({ images, name }) {
     const el = scrollRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      (entries) => entries.forEach(e => { if (e.isIntersecting) setActive(Number(e.target.dataset.idx)); }),
+      (entries) => entries.forEach(e => {
+        if (e.isIntersecting) setActive(Number(e.target.dataset.idx));
+      }),
       { root: el, threshold: 0.55 }
     );
     Array.from(el.children).forEach(s => observer.observe(s));
@@ -310,65 +324,77 @@ function Gallery({ images, name }) {
   };
 
   return (
-    <div>
-      <div ref={scrollRef} className="gallery-scroll">
-        {images.map((src, i) => (
-          <div key={i} data-idx={String(i)} className="gallery-slide">
-            <img src={src} alt={`${name} — ${i + 1}`} style={{ width: '100%', height: 'clamp(300px, 68vw, 640px)', objectFit: 'cover' }} />
-          </div>
-        ))}
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.45rem', padding: '1.1rem 0 0.5rem' }}>
-        {images.map((_, i) => (
-          <button key={i} onClick={() => goTo(i)} aria-label={`Image ${i + 1}`} style={{
-            width: i === active ? '26px' : '6px', height: '6px',
-            borderRadius: '9999px',
-            background: i === active ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.22)',
-            border: 'none', cursor: 'pointer', padding: 0,
-            transition: 'all 0.38s cubic-bezier(0.16,1,0.3,1)',
-          }} />
-        ))}
-      </div>
-    </div>
-  );
-}
+    <section style={{ padding: '3.5rem 1.5rem', borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.07)' }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+        <div className="product-layout">
 
-/* ── Product section ── */
-function ProductSection({ perfume, isLast }) {
-  return (
-    <section style={{ paddingBottom: isLast ? '2rem' : '5rem', borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.055)', marginBottom: isLast ? 0 : '5rem' }}>
-      <div style={{ padding: '3.5rem 1.5rem 1.25rem' }}>
-        <p style={{ fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.3)', marginBottom: '0.6rem' }}>{perfume.edp}</p>
-        <h2 style={{ fontSize: 'clamp(2.5rem, 10vw, 5rem)', fontWeight: 500, letterSpacing: '0.1em', color: '#fff', lineHeight: 1 }}>{perfume.name}</h2>
-        <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)' }}>{perfume.subtitle}</p>
-      </div>
-
-      <Gallery images={perfume.images} name={perfume.name} />
-
-      <div style={{ padding: '1.25rem 1.5rem 0' }}>
-        <div className="liquid-glass" style={{ borderRadius: '1.25rem', padding: '1.875rem 1.625rem', color: 'rgba(255,255,255,0.85)' }}>
-          <p style={{ fontSize: '0.9375rem', lineHeight: 1.78, color: 'rgba(255,255,255,0.55)', marginBottom: '1.75rem' }}>{perfume.description}</p>
-          <div style={{ marginBottom: '2rem' }}>
-            {perfume.notes.map((n, i) => (
-              <div key={n.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '0.65rem 0', borderBottom: i < perfume.notes.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
-                <span style={{ fontSize: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.24em', color: 'rgba(255,255,255,0.28)' }}>{n.label}</span>
-                <span style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.6)' }}>{n.value}</span>
+          {/* Left: gallery */}
+          <div className="product-col-gallery">
+            <div style={{ borderRadius: '1rem', overflow: 'hidden' }}>
+              <div ref={scrollRef} className="gallery-scroll">
+                {perfume.images.map((src, i) => (
+                  <div key={i} data-idx={String(i)} className="gallery-slide">
+                    <img src={src} alt={`${perfume.name} — ${i + 1}`}
+                      style={{ width: '100%', height: '70vh', objectFit: 'contain', background: '#EDE9E3', display: 'block' }} />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.45rem', padding: '0.75rem 0 0' }}>
+              {perfume.images.map((_, i) => (
+                <button key={i} onClick={() => goTo(i)} aria-label={`Image ${i + 1}`} style={{
+                  width: i === active ? '26px' : '6px', height: '6px',
+                  borderRadius: '9999px',
+                  background: i === active ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.15)',
+                  border: 'none', cursor: 'pointer', padding: 0,
+                  transition: 'all 0.38s cubic-bezier(0.16,1,0.3,1)',
+                }} />
+              ))}
+            </div>
           </div>
-          <a href="https://wa.me/918111811709" target="_blank" rel="noopener noreferrer" className="wa-btn" style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem',
-            borderRadius: '9999px', padding: '0.875rem 1.75rem', fontSize: '0.875rem', fontWeight: 500,
-            color: '#fff', background: 'rgba(37,211,102,0.18)', border: '1px solid rgba(37,211,102,0.45)',
-            backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
-            transition: 'background 0.2s, border-color 0.2s',
-          }}
-            onMouseEnter={e => { e.currentTarget.style.background='rgba(37,211,102,0.28)'; e.currentTarget.style.borderColor='rgba(37,211,102,0.7)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background='rgba(37,211,102,0.18)'; e.currentTarget.style.borderColor='rgba(37,211,102,0.45)'; }}
-          >
-            <IconWhatsApp size={17} />
-            Order {perfume.name} on WhatsApp
-          </a>
+
+          {/* Right: info */}
+          <div className="product-col-info">
+            <p style={{ fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(0,0,0,0.32)', marginBottom: '0.3rem' }}>{perfume.edp}</p>
+            <h2 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 500, letterSpacing: '0.1em', color: '#1a1a1a', lineHeight: 1, marginBottom: '0.25rem' }}>{perfume.name}</h2>
+            <p style={{ fontSize: '0.6875rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)', marginBottom: '1.5rem' }}>{perfume.subtitle}</p>
+
+            <div style={{
+              background: 'rgba(255,255,255,0.55)',
+              backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255,255,255,0.85)',
+              borderRadius: '1.25rem',
+              padding: '1.5rem 1.375rem',
+              boxShadow: '0 2px 20px rgba(0,0,0,0.05)',
+            }}>
+              <p style={{ fontSize: '0.875rem', lineHeight: 1.78, color: 'rgba(0,0,0,0.52)', marginBottom: '1.25rem' }}>{perfume.description}</p>
+              <div style={{ marginBottom: '1.5rem' }}>
+                {perfume.notes.map((n, i) => (
+                  <div key={n.label} style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+                    padding: '0.55rem 0',
+                    borderBottom: i < perfume.notes.length - 1 ? '1px solid rgba(0,0,0,0.06)' : 'none',
+                  }}>
+                    <span style={{ fontSize: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.24em', color: 'rgba(0,0,0,0.28)' }}>{n.label}</span>
+                    <span style={{ fontSize: '0.75rem', letterSpacing: '0.1em', color: 'rgba(0,0,0,0.62)' }}>{n.value}</span>
+                  </div>
+                ))}
+              </div>
+              <a href={`https://wa.me/918111811709?text=${encodeURIComponent(`Hey! I'm interested in buying ${perfume.name} by LUNE. Can you help me place an order?`)}`} target="_blank" rel="noopener noreferrer" className="wa-btn" style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                borderRadius: '9999px', padding: '0.55rem 1.1rem', fontSize: '0.75rem', fontWeight: 500,
+                color: '#fff', background: '#1a9e4a', border: 'none',
+                transition: 'background 0.2s',
+              }}
+                onMouseEnter={e => { e.currentTarget.style.background='#168040'; }}
+                onMouseLeave={e => { e.currentTarget.style.background='#1a9e4a'; }}
+              >
+                <IconWhatsApp size={15} />
+                Order {perfume.name} on WhatsApp
+              </a>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -475,45 +501,52 @@ function ProductsPage({ navigate }) {
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#080808', fontFamily: '"Helvetica Regular", "Helvetica Neue", Helvetica, Arial, sans-serif', color: '#fff' }}>
-      <div style={{ position: 'fixed', inset: 0, background: 'radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255,255,255,0.025) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
-
+    <div style={{ minHeight: '100vh', background: '#EDE9E3', fontFamily: '"Helvetica Regular", "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
       {/* Header */}
-      <header className="liquid-glass" style={{ position: 'sticky', top: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem', height: '54px' }}>
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 50,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 1.5rem', height: '54px',
+        background: 'rgba(237,233,227,0.82)',
+        backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(0,0,0,0.07)',
+      }}>
         <button onClick={() => navigate('/')} style={{
           fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.22em',
-          color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.4rem',
+          color: 'rgba(0,0,0,0.38)', display: 'flex', alignItems: 'center', gap: '0.4rem',
           background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
           transition: 'color 0.2s',
         }}
-          onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.8)'}
-          onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.4)'}
+          onMouseEnter={e => e.currentTarget.style.color='rgba(0,0,0,0.75)'}
+          onMouseLeave={e => e.currentTarget.style.color='rgba(0,0,0,0.38)'}
         >
           ← Home
         </button>
-        <span style={{ fontSize: '0.8125rem', fontWeight: 500, letterSpacing: '0.24em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.85)' }}>LUNE</span>
+        <span style={{ fontSize: '0.8125rem', fontWeight: 500, letterSpacing: '0.24em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.7)' }}>LUNE</span>
         <div style={{ width: '48px' }} />
       </header>
 
-      {/* Intro */}
-      <div style={{ position: 'relative', zIndex: 1, padding: '3rem 1.5rem 0' }}>
-        <p style={{ fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.28)', marginBottom: '0.5rem' }}>The Collection</p>
-        <h1 style={{ fontSize: 'clamp(1.5rem,5vw,2.75rem)', fontWeight: 500, letterSpacing: '0.04em', color: 'rgba(255,255,255,0.88)' }}>Celestial Fragrances</h1>
-        <div style={{ marginTop: '1.25rem', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+      {/* Intro label */}
+      <div style={{ padding: '2.5rem 1.5rem 0', maxWidth: '640px', margin: '0 auto' }}>
+        <p style={{ fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.3em', color: 'rgba(0,0,0,0.3)', marginBottom: '0.35rem' }}>The Collection</p>
+        <h1 style={{ fontSize: 'clamp(1.25rem, 4vw, 2rem)', fontWeight: 500, letterSpacing: '0.05em', color: 'rgba(0,0,0,0.72)' }}>Celestial Fragrances</h1>
+        <div style={{ marginTop: '1.5rem', height: '1px', background: 'rgba(0,0,0,0.08)' }} />
       </div>
 
       {/* Products */}
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        {perfumes.map((p, i) => <ProductSection key={p.id} perfume={p} isLast={i === perfumes.length - 1} />)}
-      </div>
+      {perfumes.map((p, i) => <ProductSection key={p.id} perfume={p} isLast={i === perfumes.length - 1} />)}
 
       {/* Footer */}
-      <footer style={{ position: 'relative', zIndex: 1, padding: '2.5rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.055)', marginTop: '2rem' }}>
-        <p style={{ fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.2)' }}>© {new Date().getFullYear()} LUNE</p>
+      <footer style={{
+        padding: '2rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        background: '#D9D4CC',
+        borderTop: '1px solid rgba(0,0,0,0.06)',
+      }}>
+        <p style={{ fontSize: '0.5625rem', textTransform: 'uppercase', letterSpacing: '0.18em', color: 'rgba(0,0,0,0.38)' }}>© {new Date().getFullYear()} LUNE</p>
         <a href="https://www.instagram.com/lune_perfumes_/" target="_blank" rel="noopener noreferrer"
-          style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.6875rem', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.28)', transition: 'color 0.2s' }}
-          onMouseEnter={e => e.currentTarget.style.color='rgba(255,255,255,0.7)'}
-          onMouseLeave={e => e.currentTarget.style.color='rgba(255,255,255,0.28)'}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.6875rem', letterSpacing: '0.08em', color: 'rgba(0,0,0,0.45)', transition: 'color 0.2s' }}
+          onMouseEnter={e => e.currentTarget.style.color='rgba(0,0,0,0.8)'}
+          onMouseLeave={e => e.currentTarget.style.color='rgba(0,0,0,0.45)'}
         >
           <IconInstagram size={13} />
           @lune_perfumes_
@@ -527,21 +560,19 @@ function ProductsPage({ navigate }) {
    ROUTER
 ══════════════════════════════════ */
 function App() {
-  const [view, setView] = useState(() =>
-    window.location.pathname.startsWith('/products') ? 'products' : 'home'
-  );
+  const getView = () => window.location.hash === '#products' ? 'products' : 'home';
+  const [view, setView] = useState(getView);
 
   const navigate = (path) => {
-    history.pushState({}, '', path);
+    const isProducts = path.startsWith('/products');
+    // Use hash fragments — never a real path, so any server works (Live Server, Next.js, etc.)
+    history.pushState({}, '', isProducts ? '#products' : location.pathname);
     window.scrollTo(0, 0);
-    setView(path.startsWith('/products') ? 'products' : 'home');
+    setView(isProducts ? 'products' : 'home');
   };
 
   useEffect(() => {
-    const onPop = () => {
-      window.scrollTo(0, 0);
-      setView(window.location.pathname.startsWith('/products') ? 'products' : 'home');
-    };
+    const onPop = () => { window.scrollTo(0, 0); setView(getView()); };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
